@@ -12,3 +12,5 @@ else:
     print "No, it wasn't found... We need to improve our SEO techniques"
 
 browser.quit()
+
+print 'asdf'
