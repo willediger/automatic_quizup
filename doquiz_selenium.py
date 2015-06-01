@@ -50,10 +50,12 @@ curr_question = u''
 x = 1
 while x <= 7:
     question_text = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Question__text"))).text
-    if curr_question != question_text:
+    if curr_question != question_text: #new question
         correct_answer = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
         question_answers.append([question_text, correct_answer])
         curr_question = question_text
         x += 1
+
+print question_answers
 
 driver.quit()
