@@ -56,15 +56,13 @@ while x <= 7:
     question_text = question.text
     print question_text
 
-    if curr_question != question_text: #new question
-        correct_answer = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
-        print correct_answer
-        question_answers.append([question_text, correct_answer])
+    # if curr_question != question_text: #new question
+    correct_answer = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
+    print correct_answer
+    question_answers.append([question_text, correct_answer])
 
-        # print question_answers[x-1]
-
-        curr_question = question_text
-        x += 1
+    curr_question = question_text
+    x += 1
 
 driver.quit()
 
