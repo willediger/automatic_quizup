@@ -21,6 +21,7 @@ print new_window_handle
 
 driver.switch_to.window(new_window_handle)
 
+
 fb_email = wait.until(EC.element_to_be_clickable((By.ID, "email")))
 fb_email.send_keys('willhinsa@gmail.com')
 
@@ -29,6 +30,8 @@ fb_pass.send_keys('Dark23@q')
 
 fb_login = wait.until(EC.element_to_be_clickable((By.ID, "loginbutton")))
 fb_login.click()
+
+# is_stale = wait.until(EC.staleness_of(fb_email))
 
 while len(driver.window_handles) > 1:
     time.sleep(1)
@@ -49,11 +52,16 @@ question_answers = []
 curr_question = u''
 x = 1
 while x <= 7:
-    question_text = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Question__text"))).text
+    question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
+    question_text = question.text
     if curr_question != question_text: #new question
         correct_answer = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
         question_answers.append([question_text, correct_answer])
+
+        print question_answers
+
         curr_question = question_text
+        # is_stale = wait.until(EC.staleness_of((By.CLASS_NAME, "Question__text")))
         x += 1
 
 print question_answers
