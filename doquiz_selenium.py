@@ -3,8 +3,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
-from selenium.webdriver.common.keys import Keys
-
 
 driver = webdriver.Chrome()
 driver.get('https://quizup.com/en/login')
@@ -12,7 +10,7 @@ driver.get('https://quizup.com/en/login')
 base_window_handle = driver.current_window_handle
 print base_window_handle
 
-wait = WebDriverWait(driver, 10)
+wait = WebDriverWait(driver, 30)
 
 while len(driver.window_handles) == 1:
     wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "FacebookButton"))).click()
@@ -37,33 +35,22 @@ while len(driver.window_handles) > 1:
 
 print driver.window_handles
 
-driver.switch_to(base_window_handle)
-# driver.get('https://quizup.com/topics/peep-show')
+driver.switch_to.window(base_window_handle)
+
+profile_title = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "MyTopics__item")))
+
+driver.get('https://quizup.com/topics/peep-show')
+
+play_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayButton"))).click()
+
+play_random_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayRandomButton"))).click()
+
+question_answers = []
+for x in range(1,7):
+    question_text = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Question__text")))
+    correct_answer = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Answer--correct")))
+    question_answers.append([question_text.text, correct_answer])
+
+print question_answers
 
 driver.quit()
-
-# fb_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable(By.CLASS_NAME,'FacebookButton'))
-
-# fb_button = elem_clickable(wait, By.CLASS_NAME,'FacebookButton')[0]
-# driver.implicitly_wait(5)
-
-# element.click()
-# driver.implicitly_wait(5)
-#
-# driver.switch_to.window('Facebook')
-#
-#
-
-
-# id = email
-# id = pass
-# id = persist_box ; value = 1
-
-
-
-element.click()
-
-
-windows = driver.switch_to.window()
-
-driver.close()
