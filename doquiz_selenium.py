@@ -46,11 +46,14 @@ play_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayButton"
 play_random_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayRandomButton"))).click()
 
 question_answers = []
-for x in range(1,7):
-    question_text = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Question__text")))
-    correct_answer = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Answer--correct")))
-    question_answers.append([question_text.text, correct_answer])
-
-print question_answers
+curr_question = u''
+x = 1
+while x <= 7:
+    question_text = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Question__text"))).text
+    if curr_question != question_text:
+        correct_answer = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
+        question_answers.append([question_text, correct_answer])
+        curr_question = question_text
+        x += 1
 
 driver.quit()
