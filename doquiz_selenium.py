@@ -8,7 +8,6 @@ driver = webdriver.Chrome()
 driver.get('https://quizup.com/en/login')
 
 base_window_handle = driver.current_window_handle
-print base_window_handle
 
 wait = WebDriverWait(driver, 30)
 
@@ -17,10 +16,8 @@ while len(driver.window_handles) == 1:
     time.sleep(1)
 
 new_window_handle = next(i for i in driver.window_handles if i != base_window_handle)
-print new_window_handle
 
 driver.switch_to.window(new_window_handle)
-
 
 fb_email = wait.until(EC.element_to_be_clickable((By.ID, "email")))
 fb_email.send_keys('willhinsa@gmail.com')
@@ -31,39 +28,45 @@ fb_pass.send_keys('Dark23@q')
 fb_login = wait.until(EC.element_to_be_clickable((By.ID, "loginbutton")))
 fb_login.click()
 
-# is_stale = wait.until(EC.staleness_of(fb_email))
 
 while len(driver.window_handles) > 1:
     time.sleep(1)
-
-print driver.window_handles
 
 driver.switch_to.window(base_window_handle)
 
 profile_title = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "MyTopics__item")))
 
-driver.get('https://quizup.com/topics/peep-show')
+driver.get("https://quizup.com/topics/peep-show")
 
-play_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayButton"))).click()
+play_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayButton")))
+time.sleep(1)
+play_button.click()
 
-play_random_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayRandomButton"))).click()
+play_random_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayRandomButton")))
+time.sleep(1)
+play_random_button.click()
 
 question_answers = []
 curr_question = u''
 x = 1
 while x <= 7:
-    question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
+
+    round_nbr = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "QuestionScene__round")))
+    question = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Question__text")))
     question_text = question.text
+    print question_text
+
     if curr_question != question_text: #new question
         correct_answer = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
+        print correct_answer
         question_answers.append([question_text, correct_answer])
 
-        print question_answers
+        # print question_answers[x-1]
 
         curr_question = question_text
-        # is_stale = wait.until(EC.staleness_of((By.CLASS_NAME, "Question__text")))
         x += 1
 
-print question_answers
-
 driver.quit()
+
+#Answer
+#Answer__text
