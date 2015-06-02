@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
-
+import re
 
 driver = webdriver.Chrome()
 driver.get('https://quizup.com/en/login')
@@ -29,7 +29,6 @@ fb_pass.send_keys('Dark23@q')
 fb_login = wait.until(EC.element_to_be_clickable((By.ID, "loginbutton")))
 fb_login.click()
 
-
 while len(driver.window_handles) > 1:
     time.sleep(1)
 
@@ -48,7 +47,7 @@ time.sleep(1)
 play_random_button.click()
 
 question_answers = []
-curr_question = u''
+# curr_question = u''
 x = 1
 while x <= 7:
 
@@ -57,12 +56,17 @@ while x <= 7:
     question_text = question.text
     print question_text
 
-    # if curr_question != question_text: #new question
+    answers = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "Answer__text")))
+    while len(answers[0].text) == 0:
+        answers_text = [i.text for i in answers]
+
+    print '_'.join(answers_text)
+
     correct_answer = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
     print correct_answer
     question_answers.append([question_text, correct_answer])
 
-    curr_question = question_text
+    # curr_question = question_text
     x += 1
 
 driver.quit()
