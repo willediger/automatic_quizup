@@ -4,12 +4,13 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
+
 driver = webdriver.Chrome()
 driver.get('https://quizup.com/en/login')
 
 base_window_handle = driver.current_window_handle
 
-wait = WebDriverWait(driver, 30)
+wait = WebDriverWait(driver, 60)
 
 while len(driver.window_handles) == 1:
     wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "FacebookButton"))).click()
@@ -52,12 +53,12 @@ x = 1
 while x <= 7:
 
     round_nbr = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "QuestionScene__round")))
-    question = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Question__text")))
+    question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
     question_text = question.text
     print question_text
 
     # if curr_question != question_text: #new question
-    correct_answer = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
+    correct_answer = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
     print correct_answer
     question_answers.append([question_text, correct_answer])
 
