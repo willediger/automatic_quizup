@@ -1,7 +1,17 @@
 import sqlite3
 
 db = sqlite3.connect('answers.db')
+db.row_factory = lambda cursor, row: row[0]
 c = db.cursor()
+
+# c.execute("select answer from quizup_answers")
+# all_rows = c.fetchall()
+# print all_rows
+
+# while True:
+#     pass
+
+# db.close()
 
 # db.execute('create table quizup_answers '
 #                   '(category text, question text, answer text)')
@@ -24,14 +34,22 @@ def get_category_url(category_name):
     c.execute("select category_url "
               "from quizup_categories "
               "where category = ?", (category_name,))
-    return c.fetchone()[0]
+    return c.fetchone()
 
 
 def get_answer(category, question):
-    c.execute("select answer"
-              "from quizup_answers"
-              "where category = ? and question = ?", (category, question))
-    return c.fetchone()[0]
+    print 'get answer ' + question
+    c.execute("select answer "
+              "from quizup_answers "
+              "where category = ? and question = ?", (category, question,))
+    return c.fetchone()
+
+def get_answers(category):
+    c.execute("select answer "
+              "from quizup_answers "
+              "where category = ?", (category,))
+    return c.fetchall()
+
 
 # z = get_category_url('peep-show')
 # print z

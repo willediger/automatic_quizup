@@ -5,8 +5,8 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import quizupanswers
 
-def run_quizup(category_name):
 
+def run_quizup(category_name):
     driver = webdriver.Chrome()
     driver.get('https://quizup.com/en/login')
 
@@ -64,18 +64,28 @@ def run_quizup(category_name):
         print 'round nbr' + str(x)
         question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
         question_text = question.text
+
+        answer = quizupanswers.get_answer(category_name, question_text)
         print question_text
+        print answer
 
         answers = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "Answer__text")))
         while len(answers[3].text) == 0:
             pass
 
-        answers_text = [i.text for i in answers]
-        print '_'.join(answers_text)
+        if answer is not None:
+            answers_text = [i.text for i in answers]
+            correct_answer_idx = answers_text.index(answer)
+            print correct_answer_idx
+            answers[correct_answer_idx].click()
+        else:
+            answers[0].click()
+            # correct_answer_elem
 
         correct_answer = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
 
-        quizupanswers.new_answer(category_name, question_text, correct_answer)
+        if answer is None:
+            quizupanswers.new_answer(category_name, question_text, correct_answer)
 
         print correct_answer
         question_answers.append([question_text, correct_answer])
@@ -85,5 +95,5 @@ def run_quizup(category_name):
 
     driver.quit()
 
-    #Answer
-    #Answer__text
+    # Answer
+    # Answer__text
