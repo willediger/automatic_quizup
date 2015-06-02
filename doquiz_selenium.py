@@ -8,13 +8,35 @@ import collections
 
 def do_quizup(category_name):
     login = start_quizup(category_name)
-    cycle = cycle_quizup(login.driver, login.wait, category_name)
+    driver = login.driver
+    wait = login.wait
+    cycle = cycle_quizup(driver, wait, category_name)
 
 def cycle_quizup(driver, wait, category_name):
-    question_run = do_questions(driver, wait, category_name)
+    print 'cycle_quizup'
+    while True:
+        get_to_category_page(driver, wait, category_name)
+        do_questions(driver, wait, category_name)
+        # start_next_round(driver, wait, category_name)
 
+# def start_next_round(driver, wait, category_name):
+#
+#     print 'start_next_round'
+#     no_rematch_class = "RematchScene__rematch__button"
+#     print no_rematch_class
+#     no_rematch = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, no_rematch_class)))
+#     print no_rematch
+#     time.sleep(1)
+#     no_rematch.click()
+#     print 'no rematch'
+#
+#     next_game_play_class = "EndGameResultsActions__button"
+#     next_game = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, next_game_play_class)))
+#     time.sleep(1)
+#     next_game.click()
 
 def start_quizup(category_name):
+    print 'start_quizup'
     driver = webdriver.Chrome()
     driver.get('https://quizup.com/en/login')
 
@@ -49,6 +71,13 @@ def start_quizup(category_name):
 
     wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "MyTopics__item")))
 
+    rich_return = collections.namedtuple('rich', ['driver', 'wait'])
+    r = rich_return(driver, wait)
+    return r
+
+def get_to_category_page(driver, wait, category_name):
+    print 'get_to_category_page'
+
     category_url = quizupanswers.get_category_url(category_name)
     driver.get(category_url)
 
@@ -64,12 +93,9 @@ def start_quizup(category_name):
 
     print 'clicked play2'
 
-    rich_return = collections.namedtuple('rich', ['driver', 'wait'])
-    r = rich_return(driver, wait)
-    return r
-
 
 def do_questions(driver, wait, category_name):
+    print 'do_questions'
     question_answers = []
     x = 1
     while x <= 7:
@@ -103,6 +129,8 @@ def do_questions(driver, wait, category_name):
         question_answers.append([question_text, correct_answer])
 
         x += 1
+
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME, "RematchScene__rematch__text")))
 
     rich_return = collections.namedtuple('rich', ['driver', 'wait'])
     r = rich_return(driver, wait)
