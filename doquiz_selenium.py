@@ -3,14 +3,15 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
-import re
+import quizupanswers
+
 
 driver = webdriver.Chrome()
 driver.get('https://quizup.com/en/login')
 
 base_window_handle = driver.current_window_handle
 
-wait = WebDriverWait(driver, 60)
+wait = WebDriverWait(driver, 200)
 
 while len(driver.window_handles) == 1:
     wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "FacebookButton"))).click()
@@ -47,7 +48,6 @@ time.sleep(1)
 play_random_button.click()
 
 question_answers = []
-# curr_question = u''
 x = 1
 while x <= 7:
 
@@ -57,9 +57,10 @@ while x <= 7:
     print question_text
 
     answers = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "Answer__text")))
-    while len(answers[0].text) == 0:
-        answers_text = [i.text for i in answers]
+    while len(answers[3].text) == 0:
+        pass
 
+    answers_text = [i.text for i in answers]
     print '_'.join(answers_text)
 
     correct_answer = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
