@@ -51,6 +51,7 @@ def get_answers(category):
     return c.fetchall()
 
 
+
 # z = get_category_url('peep-show')
 # print z
 

@@ -7,10 +7,13 @@ import quizupanswers
 import collections
 
 def do_quizup(category_name):
-    login = start_quizup(category_name)
-    driver = login.driver
-    wait = login.wait
-    cycle = cycle_quizup(driver, wait, category_name)
+    try:
+        login = start_quizup(category_name)
+        driver = login.driver
+        wait = login.wait
+        cycle = cycle_quizup(driver, wait, category_name)
+    finally:
+        driver.quit()
 
 def cycle_quizup(driver, wait, category_name):
     print 'cycle_quizup'
