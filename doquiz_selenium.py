@@ -4,9 +4,17 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import quizupanswers
+import collections
+
+def do_quizup(category_name):
+    login = start_quizup(category_name)
+    cycle = cycle_quizup(login.driver, login.wait, category_name)
+
+def cycle_quizup(driver, wait, category_name):
+    question_run = do_questions(driver, wait, category_name)
 
 
-def run_quizup(category_name):
+def start_quizup(category_name):
     driver = webdriver.Chrome()
     driver.get('https://quizup.com/en/login')
 
@@ -56,6 +64,12 @@ def run_quizup(category_name):
 
     print 'clicked play2'
 
+    rich_return = collections.namedtuple('rich', ['driver', 'wait'])
+    r = rich_return(driver, wait)
+    return r
+
+
+def do_questions(driver, wait, category_name):
     question_answers = []
     x = 1
     while x <= 7:
@@ -76,11 +90,9 @@ def run_quizup(category_name):
         if answer is not None:
             answers_text = [i.text for i in answers]
             correct_answer_idx = answers_text.index(answer)
-            print correct_answer_idx
             answers[correct_answer_idx].click()
         else:
             answers[0].click()
-            # correct_answer_elem
 
         correct_answer = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
 
@@ -90,10 +102,8 @@ def run_quizup(category_name):
         print correct_answer
         question_answers.append([question_text, correct_answer])
 
-        # curr_question = question_text
         x += 1
 
-    driver.quit()
-
-    # Answer
-    # Answer__text
+    rich_return = collections.namedtuple('rich', ['driver', 'wait'])
+    r = rich_return(driver, wait)
+    return r

@@ -1,3 +1,3 @@
 import doquiz_selenium
 
-doquiz_selenium.run_quizup("peep-show")
+doquiz_selenium.do_quizup("peep-show")
