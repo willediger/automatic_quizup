@@ -5,7 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import quizupanswers
 
-def run_quizup():
+def run_quizup(category_name):
 
     driver = webdriver.Chrome()
     driver.get('https://quizup.com/en/login')
@@ -20,6 +20,7 @@ def run_quizup():
 
     new_window_handle = next(i for i in driver.window_handles if i != base_window_handle)
 
+    print 'facebook login open'
     driver.switch_to.window(new_window_handle)
 
     fb_email = wait.until(EC.element_to_be_clickable((By.ID, "email")))
@@ -36,23 +37,31 @@ def run_quizup():
 
     driver.switch_to.window(base_window_handle)
 
-    profile_title = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "MyTopics__item")))
+    print 'facebook logged in'
 
-    driver.get("https://quizup.com/topics/peep-show")
+    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "MyTopics__item")))
+
+    category_url = quizupanswers.get_category_url(category_name)
+    driver.get(category_url)
 
     play_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayButton")))
     time.sleep(1)
     play_button.click()
 
+    print 'clicked play'
+
     play_random_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayRandomButton")))
     time.sleep(1)
     play_random_button.click()
+
+    print 'clicked play2'
 
     question_answers = []
     x = 1
     while x <= 7:
 
         round_nbr = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "QuestionScene__round")))
+        print 'round nbr' + str(x)
         question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
         question_text = question.text
         print question_text
@@ -65,6 +74,9 @@ def run_quizup():
         print '_'.join(answers_text)
 
         correct_answer = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
+
+        quizupanswers.new_answer(category_name, question_text, correct_answer)
+
         print correct_answer
         question_answers.append([question_text, correct_answer])
 
