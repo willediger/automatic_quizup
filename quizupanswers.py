@@ -52,7 +52,7 @@ def get_answers(category, question):
     return c.fetchall()
 
 
-new_category('general-knowledge', 'https://quizup.com/topics/general-knowledge')
+# new_category('general-knowledge', 'https://quizup.com/topics/general-knowledge')
 # z = get_category_url('peep-show')
 # print z
 
