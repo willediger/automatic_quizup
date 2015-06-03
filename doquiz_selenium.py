@@ -5,47 +5,36 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import quizupanswers
 import collections
+import random
+# from pyvirtualdisplay import Display
 
 def do_quizup(category_name):
+    driver = create_driver()
+
     try:
-        login = start_quizup(category_name)
-        driver = login.driver
+        login = start_quizup(driver, category_name)
         wait = login.wait
-        cycle = cycle_quizup(driver, wait, category_name)
-    finally:
+        cycle_quizup(driver, wait, category_name)
+    except:
         driver.quit()
 
-def cycle_quizup(driver, wait, category_name):
-    print 'cycle_quizup'
-    while True:
-        get_to_category_page(driver, wait, category_name)
-        do_questions(driver, wait, category_name)
-        # start_next_round(driver, wait, category_name)
+    # login = start_quizup(driver, category_name)
+    # wait = login.wait
+    # cycle_quizup(driver, wait, category_name)
 
-# def start_next_round(driver, wait, category_name):
-#
-#     print 'start_next_round'
-#     no_rematch_class = "RematchScene__rematch__button"
-#     print no_rematch_class
-#     no_rematch = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, no_rematch_class)))
-#     print no_rematch
-#     time.sleep(1)
-#     no_rematch.click()
-#     print 'no rematch'
-#
-#     next_game_play_class = "EndGameResultsActions__button"
-#     next_game = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, next_game_play_class)))
-#     time.sleep(1)
-#     next_game.click()
 
-def start_quizup(category_name):
-    print 'start_quizup'
+def create_driver():
+    print 'create_driver'
     driver = webdriver.Chrome()
+    return driver
+
+def start_quizup(driver, category_name):
+    print 'start_quizup'
     driver.get('https://quizup.com/en/login')
 
     base_window_handle = driver.current_window_handle
 
-    wait = WebDriverWait(driver, 200)
+    wait = WebDriverWait(driver, 180)
 
     while len(driver.window_handles) == 1:
         wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "FacebookButton"))).click()
@@ -78,20 +67,37 @@ def start_quizup(category_name):
     r = rich_return(driver, wait)
     return r
 
+
+def cycle_quizup(driver, wait, category_name):
+    print 'cycle_quizup'
+    while True:
+        get_to_category_page(driver, wait, category_name)
+        do_questions(driver, wait, category_name)
+
+
 def get_to_category_page(driver, wait, category_name):
     print 'get_to_category_page'
 
     category_url = quizupanswers.get_category_url(category_name)
     driver.get(category_url)
 
+    print 'navigating to category page'
+
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME, "ContactList__items")))
+    print 'contact list loaded'
+
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME, "PlayButton__icon")))
+    wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Story")))
+
+    print 'play button icon loaded'
     play_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayButton")))
-    time.sleep(1)
+    time.sleep(3)
     play_button.click()
 
     print 'clicked play'
 
     play_random_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "PlayRandomButton")))
-    time.sleep(1)
+    time.sleep(3)
     play_random_button.click()
 
     print 'clicked play2'
@@ -117,9 +123,13 @@ def do_questions(driver, wait, category_name):
             pass
 
         if answer is not None:
-            answers_text = [i.text for i in answers]
-            correct_answer_idx = answers_text.index(answer)
-            answers[correct_answer_idx].click()
+            try:
+                answers_text = [i.text for i in answers]
+                correct_answer_idx = answers_text.index(answer)
+                answers[correct_answer_idx].click()
+            except:
+                answer = None
+                answers[0].click()
         else:
             answers[0].click()
 
@@ -138,3 +148,4 @@ def do_questions(driver, wait, category_name):
     rich_return = collections.namedtuple('rich', ['driver', 'wait'])
     r = rich_return(driver, wait)
     return r
+
