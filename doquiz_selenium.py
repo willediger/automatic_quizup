@@ -124,21 +124,21 @@ def do_questions(driver, wait, category_name):
             pass
 
         guess_idx = random.randint(0,3)
-        if stored_answers is not None:
+        if stored_answers:
             try:
                 answers_text = [i.text for i in answers]
                 correct_stored_answer = list(set(stored_answers) & set(answers_text))[0]
                 correct_answer_idx = answers_text.index(correct_stored_answer)
                 answers[correct_answer_idx].click()
             except:
-                stored_answers = None
+                stored_answers = []
                 answers[guess_idx].click()
         else:
             answers[guess_idx].click()
 
         correct_answer = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
 
-        if stored_answers is None:
+        if not stored_answers:
             quizupanswers.new_answer(category_name, question_text, correct_answer)
 
         print correct_answer
