@@ -38,13 +38,14 @@ def get_category_url(category_name):
 
 
 def get_answer(category, question):
-    print 'get answer ' + question
+    print 'get answer'
     c.execute("select answer "
               "from quizup_answers "
               "where category = ? and question = ?", (category, question,))
     return c.fetchone()
 
 def get_answers(category, question):
+    print 'get answers'
     c.execute("select answer "
               "from quizup_answers "
               "where category = ? and question = ?", (category, question,))

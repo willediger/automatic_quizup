@@ -9,6 +9,7 @@ import random
 # from pyvirtualdisplay import Display
 
 def do_quizup(category_name):
+
     driver = create_driver()
 
     try:
@@ -109,12 +110,12 @@ def do_questions(driver, wait, category_name):
     x = 1
     while x <= 7:
 
-        round_nbr = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "QuestionScene__round")))
+        wait.until(EC.presence_of_element_located((By.CLASS_NAME, "QuestionScene__round")))
         print 'round nbr' + str(x)
         question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
         question_text = question.text
 
-        stored_answers = quizupanswers.get_answer(category_name, question_text)
+        stored_answers = quizupanswers.get_answers(category_name, question_text)
         print question_text
         print stored_answers
 
