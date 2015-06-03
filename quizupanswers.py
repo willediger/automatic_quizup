@@ -44,10 +44,10 @@ def get_answer(category, question):
               "where category = ? and question = ?", (category, question,))
     return c.fetchone()
 
-def get_answers(category):
+def get_answers(category, question):
     c.execute("select answer "
               "from quizup_answers "
-              "where category = ?", (category,))
+              "where category = ? and question = ?", (category, question,))
     return c.fetchall()
 
 

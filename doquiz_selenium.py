@@ -114,28 +114,30 @@ def do_questions(driver, wait, category_name):
         question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
         question_text = question.text
 
-        answer = quizupanswers.get_answer(category_name, question_text)
+        stored_answers = quizupanswers.get_answer(category_name, question_text)
         print question_text
-        print answer
+        print stored_answers
 
         answers = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "Answer__text")))
         while len(answers[3].text) == 0:
             pass
 
-        if answer is not None:
+        guess_idx = random.randint(0,3)
+        if stored_answers is not None:
             try:
                 answers_text = [i.text for i in answers]
-                correct_answer_idx = answers_text.index(answer)
+                correct_stored_answer = list(set(stored_answers) & set(answers_text))[0]
+                correct_answer_idx = answers_text.index(correct_stored_answer)
                 answers[correct_answer_idx].click()
             except:
-                answer = None
-                answers[0].click()
+                stored_answers = None
+                answers[guess_idx].click()
         else:
-            answers[0].click()
+            answers[guess_idx].click()
 
         correct_answer = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Answer--correct"))).text
 
-        if answer is None:
+        if stored_answers is None:
             quizupanswers.new_answer(category_name, question_text, correct_answer)
 
         print correct_answer
