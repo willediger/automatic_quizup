@@ -2,26 +2,28 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import time
 import quizupanswers
 import collections
 import random
+import time
+import datetime
 # from pyvirtualdisplay import Display
 
 def do_quizup(category_name):
-
+    print 'do quizup'
     driver = create_driver()
 
-    try:
-        login = start_quizup(driver, category_name)
-        wait = login.wait
-        cycle_quizup(driver, wait, category_name)
-    except:
-        driver.quit()
+    # try:
+    #     login = start_quizup(driver, category_name)
+    #     wait = login.wait
+    #     cycle_quizup(driver, wait, category_name)
+    # except:
+    #     print 'failed cycle'
+    #     driver.quit()
 
-    # login = start_quizup(driver, category_name)
-    # wait = login.wait
-    # cycle_quizup(driver, wait, category_name)
+    login = start_quizup(driver, category_name)
+    wait = login.wait
+    cycle_quizup(driver, wait, category_name)
 
 
 def create_driver():
@@ -72,6 +74,9 @@ def start_quizup(driver, category_name):
 def cycle_quizup(driver, wait, category_name):
     print 'cycle_quizup'
     while True:
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        print st
         get_to_category_page(driver, wait, category_name)
         do_questions(driver, wait, category_name)
 
@@ -108,12 +113,18 @@ def do_questions(driver, wait, category_name):
     print 'do_questions'
     question_answers = []
     x = 1
+    prev_question = u''
+    question_text = u''
     while x <= 7:
 
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME, "QuestionScene__round")))
+        while prev_question == question_text or question_text == u'':
+            question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
+            try:
+                question_text = question.text
+            except:
+                question_text = u''
+
         print 'round nbr' + str(x)
-        question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
-        question_text = question.text
 
         stored_answers = quizupanswers.get_answers(category_name, question_text)
         print question_text
@@ -123,10 +134,12 @@ def do_questions(driver, wait, category_name):
         while len(answers[3].text) == 0:
             pass
 
+        answers_text = [i.text for i in answers]
+        print answers_text
+
         guess_idx = random.randint(0,3)
         if stored_answers:
             try:
-                answers_text = [i.text for i in answers]
                 correct_stored_answer = list(set(stored_answers) & set(answers_text))[0]
                 correct_answer_idx = answers_text.index(correct_stored_answer)
                 answers[correct_answer_idx].click()
@@ -143,6 +156,8 @@ def do_questions(driver, wait, category_name):
 
         print correct_answer
         question_answers.append([question_text, correct_answer])
+
+        prev_question = question_text
 
         x += 1
 
