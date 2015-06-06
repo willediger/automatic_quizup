@@ -13,17 +13,17 @@ def do_quizup(category_name):
     print 'do quizup'
     driver = create_driver()
 
-    # try:
-    #     login = start_quizup(driver, category_name)
-    #     wait = login.wait
-    #     cycle_quizup(driver, wait, category_name)
-    # except:
-    #     print 'failed cycle'
-    #     driver.quit()
+    try:
+        login = start_quizup(driver, category_name)
+        wait = login.wait
+        cycle_quizup(driver, wait, category_name)
+    except:
+        print 'failed cycle'
+        driver.quit()
 
-    login = start_quizup(driver, category_name)
-    wait = login.wait
-    cycle_quizup(driver, wait, category_name)
+    # login = start_quizup(driver, category_name)
+    # wait = login.wait
+    # cycle_quizup(driver, wait, category_name)
 
 
 def create_driver():
@@ -37,7 +37,7 @@ def start_quizup(driver, category_name):
 
     base_window_handle = driver.current_window_handle
 
-    wait = WebDriverWait(driver, 180)
+    wait = WebDriverWait(driver, 60)
 
     while len(driver.window_handles) == 1:
         wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "FacebookButton"))).click()
