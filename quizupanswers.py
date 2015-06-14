@@ -4,21 +4,6 @@ db = sqlite3.connect('answers.db')
 db.row_factory = lambda cursor, row: row[0]
 c = db.cursor()
 
-# c.execute("select answer from quizup_answers")
-# all_rows = c.fetchall()
-# print all_rows
-
-# while True:
-#     pass
-
-# db.close()
-
-# db.execute('create table quizup_answers '
-#                   '(category text, question text, answer text)')
-
-# db.execute('create table quizup_categories ('
-#            'category text, category_url text,'
-#            ' primary key (category, category_url))')
 
 def new_category(category_name, category_url):
     c.execute("insert into quizup_categories values (?,?)", (category_name, category_url))
@@ -50,10 +35,3 @@ def get_answers(category, question):
               "from quizup_answers "
               "where category = ? and question = ?", (category, question,))
     return c.fetchall()
-
-
-# new_category('general-knowledge', 'https://quizup.com/topics/general-knowledge')
-# z = get_category_url('peep-show')
-# print z
-
-# db.close()

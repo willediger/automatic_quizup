@@ -8,7 +8,17 @@ import random
 import time
 import datetime
 from timeout import timeout
+import creds
+import psycopg2
 
+
+
+def psql_conn():
+    username = creds.psql_login()
+    pwd = creds.psql_pwd()
+    conn_str = "dbname='quizup' user='{0}' host='localhost' password='{1}'".format(username, pwd)
+    conn = psycopg2.connect(conn_str)
+    cursor = conn.cursor()
 
 def do_quizup(category_name):
     print 'do quizup'
@@ -39,6 +49,9 @@ def create_driver():
 def login(type, driver, wait, base_window_handle):
     if type == "Facebook":
 
+        fb_username = creds.fb_login()
+        fb_pwd = creds.fb_pwd()
+
         while len(driver.window_handles) == 1:
             wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "FacebookButton"))).click()
             time.sleep(1)
@@ -48,10 +61,10 @@ def login(type, driver, wait, base_window_handle):
         driver.switch_to.window(new_window_handle)
 
         fb_email = wait.until(EC.element_to_be_clickable((By.ID, "email")))
-        fb_email.send_keys('willhinsa')
+        fb_email.send_keys(fb_username)
 
         fb_pass = wait.until(EC.element_to_be_clickable((By.ID, "pass")))
-        fb_pass.send_keys('Dark23@q')
+        fb_pass.send_keys(fb_pwd)
 
         fb_login = wait.until(EC.element_to_be_clickable((By.ID, "loginbutton")))
         fb_login.click()
@@ -63,6 +76,9 @@ def login(type, driver, wait, base_window_handle):
 
     elif type == "Google":
 
+        google_username = creds.google_login()
+        google_pwd = creds.google_pwd()
+
         while len(driver.window_handles) == 1:
             wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "GoogleButton"))).click()
             time.sleep(1)
@@ -72,13 +88,13 @@ def login(type, driver, wait, base_window_handle):
         driver.switch_to.window(new_window_handle)
 
         email = wait.until(EC.element_to_be_clickable((By.ID, "Email")))
-        email.send_keys('willediger')
+        email.send_keys(google_username)
 
         next_btn = wait.until(EC.element_to_be_clickable((By.ID, "next")))
         next_btn.click()
 
         passwd = wait.until(EC.element_to_be_clickable((By.ID, "Passwd")))
-        passwd.send_keys('Dark23@q')
+        passwd.send_keys(google_pwd)
 
         login = wait.until(EC.element_to_be_clickable((By.ID, "signIn")))
         login.click()
