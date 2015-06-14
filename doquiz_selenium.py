@@ -7,7 +7,8 @@ import collections
 import random
 import time
 import datetime
-# from pyvirtualdisplay import Display
+from timeout import timeout
+
 
 def do_quizup(category_name):
     print 'do quizup'
@@ -19,6 +20,9 @@ def do_quizup(category_name):
         cycle_quizup(driver, wait, category_name)
     except:
         print 'failed cycle'
+        # z = login.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "EndGameHeader__results__text")))
+        # print z.text
+    finally:
         driver.quit()
 
     # login = start_quizup(driver, category_name)
@@ -31,6 +35,60 @@ def create_driver():
     driver = webdriver.Chrome()
     return driver
 
+
+def login(type, driver, wait, base_window_handle):
+    if type == "Facebook":
+
+        while len(driver.window_handles) == 1:
+            wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "FacebookButton"))).click()
+            time.sleep(1)
+
+        new_window_handle = next(i for i in driver.window_handles if i != base_window_handle)
+        print 'facebook login open'
+        driver.switch_to.window(new_window_handle)
+
+        fb_email = wait.until(EC.element_to_be_clickable((By.ID, "email")))
+        fb_email.send_keys('willhinsa@gmail.com')
+
+        fb_pass = wait.until(EC.element_to_be_clickable((By.ID, "pass")))
+        fb_pass.send_keys('Dark23@q')
+
+        fb_login = wait.until(EC.element_to_be_clickable((By.ID, "loginbutton")))
+        fb_login.click()
+
+        while len(driver.window_handles) > 1:
+            time.sleep(1)
+
+        print 'facebook logged in'
+
+    elif type == "Google":
+
+        while len(driver.window_handles) == 1:
+            wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "GoogleButton"))).click()
+            time.sleep(1)
+
+        new_window_handle = next(i for i in driver.window_handles if i != base_window_handle)
+        print 'google login open'
+        driver.switch_to.window(new_window_handle)
+
+        email = wait.until(EC.element_to_be_clickable((By.ID, "Email")))
+        email.send_keys('willediger')
+
+        next_btn = wait.until(EC.element_to_be_clickable((By.ID, "next")))
+        next_btn.click()
+
+        passwd = wait.until(EC.element_to_be_clickable((By.ID, "Passwd")))
+        passwd.send_keys('Dark23@q')
+
+        login = wait.until(EC.element_to_be_clickable((By.ID, "signIn")))
+        login.click()
+
+        while len(driver.window_handles) > 1:
+            time.sleep(1)
+
+        print 'Google logged in'
+
+@timeout(60)
 def start_quizup(driver, category_name):
     print 'start_quizup'
     driver.get('https://quizup.com/en/login')
@@ -39,35 +97,17 @@ def start_quizup(driver, category_name):
 
     wait = WebDriverWait(driver, 60)
 
-    while len(driver.window_handles) == 1:
-        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "FacebookButton"))).click()
-        time.sleep(1)
-
-    new_window_handle = next(i for i in driver.window_handles if i != base_window_handle)
-
-    print 'facebook login open'
-    driver.switch_to.window(new_window_handle)
-
-    fb_email = wait.until(EC.element_to_be_clickable((By.ID, "email")))
-    fb_email.send_keys('willhinsa@gmail.com')
-
-    fb_pass = wait.until(EC.element_to_be_clickable((By.ID, "pass")))
-    fb_pass.send_keys('Dark23@q')
-
-    fb_login = wait.until(EC.element_to_be_clickable((By.ID, "loginbutton")))
-    fb_login.click()
-
-    while len(driver.window_handles) > 1:
-        time.sleep(1)
+    # login("Facebook", driver, wait, base_window_handle)
+    print 'login'
+    login("Google", driver, wait, base_window_handle)
 
     driver.switch_to.window(base_window_handle)
-
-    print 'facebook logged in'
 
     wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "MyTopics__item")))
 
     rich_return = collections.namedtuple('rich', ['driver', 'wait'])
     r = rich_return(driver, wait)
+    print 'DONE - start_quizup'
     return r
 
 
@@ -81,6 +121,7 @@ def cycle_quizup(driver, wait, category_name):
         do_questions(driver, wait, category_name)
 
 
+@timeout(60)
 def get_to_category_page(driver, wait, category_name):
     print 'get_to_category_page'
 
@@ -108,7 +149,12 @@ def get_to_category_page(driver, wait, category_name):
 
     print 'clicked play2'
 
+def get_question(wait):
+    question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
+    return question
 
+
+@timeout(300)
 def do_questions(driver, wait, category_name):
     print 'do_questions'
     question_answers = []
@@ -116,12 +162,15 @@ def do_questions(driver, wait, category_name):
     prev_question = u''
     question_text = u''
     while x <= 7:
-
         while prev_question == question_text or question_text == u'':
             question = wait.until(EC.presence_of_element_located((By.CLASS_NAME, "Question__text")))
             try:
                 question_text = question.text
             except:
+                # try:
+                #     wait.until(EC.presence_of_element_located((By.CLASS_NAME, "EndGameHeader__results__text")))
+                #     break
+
                 question_text = u''
 
         print 'round nbr' + str(x)
