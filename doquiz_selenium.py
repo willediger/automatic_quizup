@@ -49,10 +49,10 @@ def start_quizup(driver, category_name):
     driver.switch_to.window(new_window_handle)
 
     fb_email = wait.until(EC.element_to_be_clickable((By.ID, "email")))
-    fb_email.send_keys('willhinsa@gmail.com')
+    fb_email.send_keys('facebook_email_here')
 
     fb_pass = wait.until(EC.element_to_be_clickable((By.ID, "pass")))
-    fb_pass.send_keys('Dark23@q')
+    fb_pass.send_keys('facebook_password_here')
 
     fb_login = wait.until(EC.element_to_be_clickable((By.ID, "loginbutton")))
     fb_login.click()
